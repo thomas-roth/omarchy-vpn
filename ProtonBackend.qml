@@ -52,7 +52,7 @@ Item {
   readonly property bool busy: connectProcess.running || statusProcess.running
   readonly property string summary: Proton.protonSummary(status)
   readonly property var details: Proton.protonDetails(status)
-  readonly property var favorites: Shared.favoriteCodes(setting("favoriteCountries", "CH,NL,US"))
+  readonly property var favorites: Shared.favoriteCodes(setting("favoriteCountries", "US,AT,DE"))
   readonly property string emptyText: signedOut
     ? Proton.PROTON_SIGNIN_HINT
     : (countriesLoaded ? "No countries match." : "Loading countries…")

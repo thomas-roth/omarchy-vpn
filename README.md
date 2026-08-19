@@ -18,7 +18,7 @@ Each installed tool gets its own chip and its own view — Proton VPN above,
 ## Install
 
 ```bash
-omarchy plugin add https://github.com/jkoestinger/omarchy-vpn.git
+omarchy plugin add https://github.com/thomas-roth/omarchy-vpn.git
 omarchy plugin enable jkoestinger.vpn
 ```
 

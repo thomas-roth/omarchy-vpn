@@ -21,7 +21,7 @@
     "defaults": {
       "refreshIntervalSec": 15,
       "preferredBackend": "Auto",
-      "favoriteCountries": "CH,NL,US",
+      "favoriteCountries": "US,AT,DE",
       "hiddenBackends": ""
     },
     "schema": [
@@ -52,7 +52,7 @@
         "key": "favoriteCountries",
         "type": "string",
         "label": "Favorite countries (comma separated)",
-        "defaultValue": "CH,NL,US",
+        "defaultValue": "US,AT,DE",
         "description": "Two-letter codes for Proton VPN and Mullvad. Windscribe names its regions instead, so it matches full names (\"Switzerland\") and leading words (\"US\" picks up US East, US Central and US West)."
       },
       {

@@ -171,11 +171,13 @@ Item {
       disconnect()
       return
     }
-    // One profile is an unambiguous "the VPN"; several need a pick.
-    if (profiles.length === 1) connectTo(targets[0])
-    else if (profiles.length === 0) actionStatus = "Import a profile first"
-    else actionStatus = "Pick a profile below"
-    actionStatusTimer.restart()
+    if (targets.length > 0) {
+      // always connect to first target in list (list sorted by recency)
+      connectTo(targets[0])
+    } else {
+      actionStatus = "Import a profile first"
+      actionStatusTimer.restart()
+    }
   }
 
   // A profile is only eligible if the tool that carries its kind is installed:
@@ -267,9 +269,14 @@ Item {
   // refusal drops the field and the list is fetched again; volatile-connection
   // filtering is what is lost, which is a stray row rather than no backend.
   property bool _filenameField: true
-  readonly property var _listCommand: _filenameField
-    ? ["nmcli", "-t", "-f", "NAME,UUID,TYPE,ACTIVE,FILENAME", "connection", "show"]
-    : ["nmcli", "-t", "-f", "NAME,UUID,TYPE,ACTIVE", "connection", "show"]
+  property bool _timestampField: true
+  readonly property var _listCommand: _timestampField
+    ? _filenameField
+      ? ["nmcli", "-t", "-f", "NAME,UUID,TYPE,ACTIVE,TIMESTAMP,FILENAME", "connection", "show"]
+      : ["nmcli", "-t", "-f", "NAME,UUID,TYPE,ACTIVE,TIMESTAMP", "connection", "show"]
+    : _filenameField
+      ? ["nmcli", "-t", "-f", "NAME,UUID,TYPE,ACTIVE,FILENAME", "connection", "show"]
+      : ["nmcli", "-t", "-f", "NAME,UUID,TYPE,ACTIVE", "connection", "show"]
 
   function unknownField(text) {
     return /not among|unknown field|invalid field|allowed fields/i.test(String(text || ""))
@@ -297,6 +304,11 @@ Item {
     onExited: function(exitCode) {
       if (exitCode !== 0) {
         var failure = String(listStderr.text || "")
+        if (root._timestampField && root.unknownField(failure)) {
+          root._timestampField = false
+          listRetry.restart()
+          return
+        }
         if (root._filenameField && root.unknownField(failure)) {
           root._filenameField = false
           listRetry.restart()

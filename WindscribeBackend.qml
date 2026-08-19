@@ -85,7 +85,7 @@ Item {
   readonly property string summary: Windscribe.windscribeSummary(status)
   readonly property var details: Windscribe.windscribeDetails(status)
   readonly property var regions: Windscribe.windscribeRegions(locations)
-  readonly property var favorites: Shared.favoriteCodes(setting("favoriteCountries", "CH,NL,US"))
+  readonly property var favorites: Shared.favoriteCodes(setting("favoriteCountries", "US,AT,DE"))
   readonly property string emptyText: locationsLoaded ? "No locations match." : "Loading locations…"
   readonly property string currentKey: Windscribe.windscribeCurrentKey(status, regions)
   readonly property var targets: filter === ""

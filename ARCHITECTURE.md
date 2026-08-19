@@ -332,7 +332,7 @@ the keys in the profile — and that difference is carried on each row as `kind`
 which picks the glyph and decides whether the username check applies.
 
 **NetworkManager discovery.** Two passes. `nmcli -t -f
-NAME,UUID,TYPE,ACTIVE,FILENAME connection show` gives every connection; the
+NAME,UUID,TYPE,ACTIVE,TIMESTAMP,FILENAME connection show` gives every connection; the
 `vpn` and `wireguard` rows are kept. A second call over just the `vpn` uuids
 fetches `vpn.service-type` (to keep only OpenVPN ones) and `vpn.data` (to check
 for a username). WireGuard rows skip that pass entirely — they are already known

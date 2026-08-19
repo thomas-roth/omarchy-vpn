@@ -56,7 +56,7 @@ Item {
   readonly property bool busy: _working || statusProcess.running
   readonly property string summary: Mullvad.mullvadSummary(status)
   readonly property var details: Mullvad.mullvadDetails(status)
-  readonly property var favorites: Shared.favoriteCodes(setting("favoriteCountries", "CH,NL,US"))
+  readonly property var favorites: Shared.favoriteCodes(setting("favoriteCountries", "US,AT,DE"))
   readonly property string emptyText: relaysLoaded ? "No countries match." : "Loading relays…"
   readonly property string currentKey: Mullvad.mullvadCurrentKey(status, relays)
   readonly property var targets: filter === ""

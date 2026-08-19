@@ -35,7 +35,7 @@ function isVolatileConnection(filename) {
   return String(filename || "").indexOf("/run/") === 0
 }
 
-// `nmcli -t -f NAME,UUID,TYPE,ACTIVE,FILENAME connection show` — one connection
+// `nmcli -t -f NAME,UUID,TYPE,ACTIVE,TIMESTAMP,FILENAME connection show` — one connection
 // per line. Two types are tunnels: `vpn` (an OpenVPN profile, or another
 // plugin's, which the second pass sorts out) and `wireguard`. Ethernet, wifi,
 // bridges and the rest are somebody else's business.
@@ -55,7 +55,7 @@ function parseNmcliConnections(raw) {
 
     var fields = []
     var rest = line
-    for (var f = 0; f < 4; f++) {
+    for (var f = 0; f < 5; f++) {
       var pair = splitNmcliLine(rest)
       fields.push(pair[0])
       rest = pair[1]
@@ -69,7 +69,8 @@ function parseNmcliConnections(raw) {
       uuid: fields[1],
       // "vpn" here means "needs the second pass to say which plugin".
       kind: fields[2] === "wireguard" ? "wireguard" : "vpn",
-      active: fields[3] === "yes"
+      active: fields[3] === "yes",
+      lastUsed: parseInt(fields[4]) || 0
     })
   }
   return connections
@@ -137,9 +138,22 @@ function nmKindLabel(profile) {
 // The glyph carries the kind, since the rows otherwise look identical and the
 // two behave differently the moment credentials come up.
 function nmTargets(profiles) {
+  var eligible = profiles.filter(function(p) { return p.active || p.lastUsed > 0 })
+  var neverUsed = profiles.filter(function(p) { return !p.active && p.lastUsed === 0 })
+
+  eligible.sort(function(a, b) {
+    if (a.active && !b.active) return -1
+    if (!a.active && b.active) return 1
+    return b.lastUsed - a.lastUsed
+  })
+  neverUsed.sort(function(a, b) {
+    return a.name.localeCompare(b.name)
+  })
+
+  var profiles_sorted = eligible.concat(neverUsed)
   var targets = []
-  for (var i = 0; i < profiles.length; i++) {
-    var profile = profiles[i]
+  for (var i = 0; i < profiles_sorted.length; i++) {
+    var profile = profiles_sorted[i]
     var wireguard = isWireGuard(profile)
 
     targets.push({
